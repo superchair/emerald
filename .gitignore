@@ -1,0 +1,13 @@
+# log files
+*.log
+
+# external lib files
+node_modules/*
+bower_libs/*
+src/lib/*
+
+# temp, etc files
+.DS_Store
+*~
+*.swp
+*.swo
