@@ -1,20 +1,28 @@
 {
-  "name": "AngularSeed",
+  "name": "angular-seed",
   "version": "0.0.1",
+  "homepage": "https://github.com/superchair/angular-seed",
+  "authors": [
+    "abrown <alex.edward.brown@gmail.com>"
+  ],
   "description": "Angular Seed Project",
+  "main": "src/index.html",
+  "license": "MIT",
+  "private": true,
   "ignore": [
     "**/.*",
     "node_modules",
     "bower_components",
-    "src/lib",
+    "bower_libs",
     "test",
     "tests"
   ],
   "dependencies": {
-    "angular": "1.2.0-rc.3"
+    "angular": "~1.2.13",
+    "jquery": "~2.1.0"
   },
   "devDependencies": {
-    "angular-mocks": "1.2.0-rc.3",
-    "jquery": "~2.1.0"
+    "angular-mocks": "~1.2.13",
+    "angular-scenario": "~1.2.13"
   }
 }

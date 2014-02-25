@@ -1,7 +1,7 @@
 # log files
 *.log
 
-# external lib files
+# external lib files and generated directories
 node_modules/*
 bower_libs/*
 src/lib/*
