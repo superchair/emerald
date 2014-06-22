@@ -23,7 +23,7 @@ module.exports = function(config) {
 
     // list of files / patterns to exclude
     exclude: [
-        'src/js/main.js'
+        'src/js/bootstrap.js'
     ],
 
     // web server port
