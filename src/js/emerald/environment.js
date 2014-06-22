@@ -24,4 +24,20 @@
             }
         };
     });
+
+    env.provider('env:init', [
+        'env:deviceIdProvider',
+        function(deviceIdProvider) {
+            return {
+                init: function(configParams) {
+                    deviceIdProvider.set(configParams.deviceId);
+                },
+
+                $get: function() {
+                    return null;
+                }
+            };
+        }
+    ]);
+
 })();
