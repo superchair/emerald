@@ -26,53 +26,94 @@ describe('MODULE ef:env', function() {
         ]));
     }); //CONSTANT env:app.version
 
-    describe('PROVIDER env:deviceId', function() {
+    describe('PROVIDER env:value', function() {
         it('should exist', inject([
-            'env:deviceId',
-            function(envDeviceId) {
-                expect(envDeviceId).toBeDefined();
-                expect(envDeviceId).toBeA('object');
+            'env:value',
+            function(envValue) {
+                expect(envValue).toBeDefined();
+                expect(envValue).toBeA('object');
             }
         ]));
 
-        it('should have a get and set method', inject([
-            'env:deviceId',
-            function(envDeviceId) {
-                expect(envDeviceId.get).toBeDefined();
-                expect(envDeviceId.get).toBeA('function');
-                expect(envDeviceId.set).toBeDefined();
-                expect(envDeviceId.set).toBeA('function');
+        it('should get and set environment parameters', inject([
+            'env:value',
+            function(envValue) {
+                var parameter = 'testParameter';
+                var expectedValue = 'testValue';
 
-                var newValue = 'test';
-                var initialValue = envDeviceId.get();
-                expect(initialValue).not.toBe(newValue);
-                envDeviceId.set(newValue);
-                var observedValue = envDeviceId.get();
-                expect(initialValue).not.toBe(observedValue);
-                expect(observedValue).toBe(newValue);
+                expect(envValue.get).toBeDefined();
+                expect(envValue.get).toBeA('function');
+                expect(envValue.set).toBeDefined();
+                expect(envValue.set).toBeA('function');
+
+                var initialValue = envValue.get(parameter);
+                expect(initialValue).not.toBeDefined();
+                envValue.set(parameter, expectedValue);
+                var observedValue = envValue.get(parameter);
+                expect(observedValue).toBe(expectedValue);
             }
         ]));
 
         it('should be configurable', function() {
-            var expectedValue = 'test';
+            var configParams = {
+                'test1': 'val1',
+                'test2': 'val2'
+            };
+            
+            module('ef:env', [
+                'env:valueProvider',
+                function(envValueProvider) {
+                    expect(envValueProvider).toBeDefined();
+                    expect(envValueProvider).toBeA('object');
+                    expect(envValueProvider.set).toBeDefined();
+                    expect(envValueProvider.set).toBeA('function');
 
-            module([
-                'env:deviceIdProvider',
-                function(envDeviceIdProvider) {
-                    expect(envDeviceIdProvider).toBeDefined();
-                    expect(envDeviceIdProvider.set).toBeDefined();
-                    envDeviceIdProvider.set(expectedValue);
+                    envValueProvider.set(configParams);
                 }
             ]);
 
             inject([
-                'env:deviceId',
-                function(envDeviceId) {
-                    var observedValue = envDeviceId.get();
-                    expect(observedValue).toBe(expectedValue);
+                'env:value',
+                function(envValue) {
+                    expect(envValue.get('test1')).toBe('val1');
+                    expect(envValue.get('test2')).toBe('val2');
                 }
             ]);
         });
-    }); //PROVIDER env:deviceId
+
+        it('should allow multiple conifguration calls', function() {
+            var configA = {
+                'a': 1,
+                'b': 1
+            };
+            var configB = {
+                'b': 2,
+                'c': 2
+            };
+
+            module('ef:env', [
+                'env:valueProvider',
+                function(envValueProvider) {
+                    envValueProvider.set(configA);
+                }
+            ]);
+
+            module('ef:env', [
+                'env:valueProvider',
+                function(envValueProvider) {
+                    envValueProvider.set(configB);
+                }
+            ]);
+
+            inject([
+                'env:value',
+                function(envValue) {
+                    expect(envValue.get('a')).toBe(1);
+                    expect(envValue.get('b')).toBe(2);
+                    expect(envValue.get('c')).toBe(2);
+                }
+            ]);
+        });
+    });
 
 }); //MODULE ef:env

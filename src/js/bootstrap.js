@@ -19,8 +19,8 @@ $(document).ready(function() {
                 data.bootstrap.appname
             ]);
 
-            bootstrap.config(['env:initProvider', function(env) {
-                env.init(data.app);
+            bootstrap.config(['env:valueProvider', function(envValueProvider) {
+                envValueProvider.set(data.app);
             }]);
 
             angular.bootstrap(document, ['app.bootstrap']);

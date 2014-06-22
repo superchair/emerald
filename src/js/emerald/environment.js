@@ -5,39 +5,26 @@
     env.constant('env:app.name', '<%= emerald.build.name %>');
     env.constant('env:app.version', '<%= emerald.build.version %>');
 
-    env.provider('env:deviceId', function() {
-        var _deviceId;
+    env.provider('env:value', function() {
+        var _configParams = {};
         return {
-            set: function(deviceId) {
-                _deviceId = deviceId;
+            set: function(configParams) {
+                angular.forEach(configParams, function(value, key) {
+                    _configParams[key] = value;
+                });
             },
 
             $get: function() {
                 return {
-                    get: function() {
-                        return _deviceId;
+                    get: function(parameter) {
+                        return _configParams[parameter];
                     },
-                    set: function(deviceId) {
-                        _deviceId = deviceId;
+
+                    set: function(parameter, value) {
+                        _configParams[parameter] = value;
                     }
                 };
             }
         };
     });
-
-    env.provider('env:init', [
-        'env:deviceIdProvider',
-        function(deviceIdProvider) {
-            return {
-                init: function(configParams) {
-                    deviceIdProvider.set(configParams.deviceId);
-                },
-
-                $get: function() {
-                    return null;
-                }
-            };
-        }
-    ]);
-
 })();

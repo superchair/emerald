@@ -8,13 +8,13 @@
         '$scope',
         'env:app.name',
         'env:app.version',
-        'env:deviceId',
+        'env:value',
         'upm:households',
-        function($scope, asName, asVersion, envDeviceId, households) {
+        function($scope, asName, asVersion, envValue, households) {
             $scope.projectName = asName;
             $scope.projectVersion = asVersion;
-            $scope.deviceId = envDeviceId.get();
-            households.getHouseholdByDeviceId(envDeviceId.get());
+            $scope.deviceId = envValue.get('deviceId');
+            households.getHouseholdByDeviceId(envValue.get('deviceId'));
         }
     ]);
 
