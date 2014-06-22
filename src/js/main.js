@@ -1,20 +1,46 @@
 'use strict';
 (function() {
-    var angularSeed = angular.module('Emerald', [
-        'UPM'
-    ]);
+    // boostrap
+    var cfg = jQuery.ajax({
+        type: 'GET',
+        url: 'env.cfg',
+        dataType: 'json',
+        async: false
+    });
 
-    angularSeed.constant('asName', 'Emerald');
-    angularSeed.constant('asVersion', '0.0.1');
+    cfg.then(
+        function(data) {
+            //success
+            var main = angular.module('CiscoWhitelabel', [
+                'EmeraldFramework'
+            ]);
 
-    angularSeed.controller('asMainCtrl', ['$scope', 'asName', 'asVersion', function($scope, asName, asVersion) {
-        $scope.projectName = asName;
-        $scope.projectVersion = asVersion;
-    }]);
+            main.controller('mainCtrl', [
+                '$scope',
+                'env:app.name',
+                'env:app.version',
+                'env:deviceId',
+                'upm:households',
+                function($scope, asName, asVersion, envDeviceId, households) {
+                    $scope.projectName = asName;
+                    $scope.projectVersion = asVersion;
+                    households.getHouseholdByDeviceId(envDeviceId.get());
+                    households.getHouseholds();
+                }
+            ]);
 
-    angularSeed.controller('test', ['$scope', 'upm:household', function($scope, upmHousehold) {
-        console.log('arguments', upmHousehold, $scope);
-        upmHousehold.get();
-    }]);
+            main.config(['env:deviceIdProvider', function(envDeviceIdProvider) {
+                envDeviceIdProvider.set(data.deviceId);
+            }]);
 
+            // bootsrap the application
+            $(document).ready(function() {
+                angular.bootstrap(document, ['CiscoWhitelabel']);
+            });
+        },
+
+        function(jqXHR, httpStatus, errorThrown) {
+            console.log('error!', jqXHR, httpStatus, errorThrown);
+        }
+    );
 })();

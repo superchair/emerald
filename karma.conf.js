@@ -11,17 +11,20 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      'bower_libs/jquery/dist/jquery.js',
       'bower_libs/angular/angular.js',
       'bower_libs/angular-mocks/angular-mocks.js',
+      'test/spec_helper.js',
       'src/js/*.js',
       'src/js/**/*.js',
-      //'test/spec_helper.js',
       'test/mock/**/*.js',
       'test/spec/**/*.js'
     ],
 
     // list of files / patterns to exclude
-    exclude: [],
+    exclude: [
+        'src/js/main.js'
+    ],
 
     // web server port
     port: 9999,

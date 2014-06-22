@@ -20,10 +20,14 @@
   "smarttabs": true,
   "globals": {
     "angular": false,
+    "jasmine": false,
+    "jQuery": false,
+    "$": false,
     "describe": false,
     "beforeEach": false,
     "it": false,
     "expect": false,
-    "inject": false
+    "inject": false,
+    "spyOn": false
   }
 }
