@@ -15,6 +15,7 @@
             $scope.projectVersion = asVersion;
             $scope.deviceId = envValue.get('deviceId');
             households.getHouseholdByDeviceId(envValue.get('deviceId'));
+            households.getHouseholdById('rogershh');
         }
     ]);
 

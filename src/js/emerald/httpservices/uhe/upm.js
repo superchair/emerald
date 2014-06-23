@@ -24,33 +24,45 @@
     });
 
     upm.provider('upm:households', function() {
+        var api = '/upm/households';
+
         return {
-            $get: ['upm:host', 'querybuilder:build', function(upmHost, queryBuilder) {
-                var api = '/upm/households';
+            $get: [
+                'upm:host',
+                'querybuilder:build',
+                function(upmHost, queryBuilder) {
+                    return {
+                        getHouseholds: function() {
+                            var httpConfig= {
+                                url: upmHost + api,
+                                method: 'GET'
+                            };
 
-                return {
-                    getHouseholds: function() {
-                        var httpConfig= {
-                            url: upmHost + api,
-                            method: 'GET'
-                        };
+                            return queryBuilder(httpConfig);
+                        },
 
-                        return queryBuilder(httpConfig);
-                    },
+                        getHouseholdByDeviceId: function(deviceId) {
+                            var httpConfig = {
+                                url: upmHost + api,
+                                method: 'GET',
+                                params: {
+                                    'filter:devices.deviceId': deviceId
+                                }
+                            };
 
-                    getHouseholdByDeviceId: function(deviceId) {
-                        var httpConfig = {
-                            url: upmHost + api,
-                            method: 'GET',
-                            params: {
-                                'filter:devices.deviceId': deviceId
-                            }
-                        };
+                            return queryBuilder(httpConfig);
+                        },
 
-                        return queryBuilder(httpConfig);
-                    }
-                };
-            }]
+                        getHouseholdById: function(householdId) {
+                            var httpConfig = {
+                                url: upmHost + api + '/' + householdId,
+                                method: 'GET',
+                            };
+                            return queryBuilder(httpConfig);
+                        }
+                    };
+                }
+            ]
         };
     });
 
