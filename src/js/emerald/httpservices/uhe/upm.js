@@ -33,7 +33,7 @@
                 function(upmHost, queryBuilder) {
                     return {
                         getHouseholds: function() {
-                            var httpConfig= {
+                            var httpConfig = {
                                 url: upmHost + api,
                                 method: 'GET'
                             };

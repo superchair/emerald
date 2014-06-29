@@ -1,6 +1,6 @@
 'use strict';
 
-describe('MODULE UPM', function() {
+describe('MODULE ef:upm', function() {
 
     describe('PROVIDER upm:host', function() {
         beforeEach(function() {
@@ -161,4 +161,4 @@ describe('MODULE UPM', function() {
 
     }); //PROVIDER upm:household
 
-}); //MODULE UPM
+}); //MODULE ef:upm 
