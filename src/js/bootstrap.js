@@ -16,6 +16,7 @@ $(document).ready(function() {
             }
 
             var bootstrap = angular.module('app.bootstrap', [
+                'EmeraldFramework',
                 data.bootstrap.appname
             ]);
 

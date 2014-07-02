@@ -2,24 +2,18 @@
 
 module.exports = function(grunt) {
 
-    var config = {
-        paths: {
-            src: 'src',
-            test: 'test',
-            deploy: 'deploy',
-            reports: 'reports'
-        },
-        ports: {
-            watch: 35729,
-            livereload: 9000
-        },
-        less: {
-            'src/css/main.css': 'src/less/main.less'
-        }
-    };
-
     // load all grunt tasks for use
     require('load-grunt-tasks')(grunt);
+    var nconf = require('nconf');
+
+    // get the config file
+    var cfgFile = './Gruntfile.properties';
+    nconf.use('file', {
+        file: './Gruntfile.properties',
+        format: nconf.formats.json
+    });
+    nconf.load();
+    var config = nconf.get();
 
     // task configurations
     grunt.initConfig({
@@ -29,20 +23,18 @@ module.exports = function(grunt) {
 
         // watch config parameters
         watch: {
-            livereload: {
+            dev: {
                 options: {
                     livereload: config.ports.watch
                 },
                 files: [
                     '<%= config.paths.src %>/**/*.html',
-                    '<%= config.paths.src %>/**/*.less',
                     '<%= config.paths.src %>/**/*.css',
                     '<%= config.paths.src %>/js/**/*.js',
                     '<%= config.paths.src %>/images/**/*.{png,jpg,jpeg,gif,webp,svg}',
                     '<%= config.paths.test %>/**/*.js'
                 ],
                 tasks: [
-                    'less:dev',
                     'jshint:dev',
                     'karma:dev:run'
                 ]
@@ -51,7 +43,7 @@ module.exports = function(grunt) {
 
         // connect config parameters
         connect: {
-            livereload: {
+            dev: {
                 options: {
                     port: config.ports.livereload,
                     hostname: '0.0.0.0',
@@ -71,10 +63,37 @@ module.exports = function(grunt) {
         // open config parameters
         open: {
             // opens the live reload url
-            livereload: {
-                url: 'http://localhost:<%= connect.livereload.options.port %>'
+            dev: {
+                url: 'http://localhost:<%= connect.dev.options.port %>'
             }
         }, // open config parameters
+
+        // vwsemu config parameters
+        vwsemu: {
+            dev: {
+                options: {
+                    proxyport: config.ports.vwsemu
+                },
+                uhe: {
+                    cmdc: {
+                        host: config.uhe.cmdc.host,
+                        port: config.uhe.cmdc.port
+                    },
+                    upm: {
+                        host: config.uhe.upm.host,
+                        port: config.uhe.upm.port
+                    },
+                    hep: {
+                        host: config.uhe.hep.host,
+                        port: config.uhe.hep.port
+                    },
+                    pps: {
+                        host: config.uhe.pps.host,
+                        port: config.uhe.pps.port
+                    }
+                }
+            }
+        }, // vwsemu config parameters
 
         // copy files
         copy: {
@@ -109,7 +128,7 @@ module.exports = function(grunt) {
                     '<%= config.paths.test %>/**/*.js'
                 ]
             },
-            
+
             // for CI environment, creates checkstyle report
             ci: {
                 options: {
@@ -121,20 +140,6 @@ module.exports = function(grunt) {
                     reporter: 'checkstyle',
                     reporterOutput: '<%= config.paths.reports %>/checkstyle.xml',
                     force: true
-                },
-                src: [
-                    '<%= config.paths.src %>/**/*.js',
-                    '<%= config.paths.test %>/**/*.js'
-                ]
-            },
-
-            singlerun: {
-                options: {
-                    jshintrc: '.jshintrc',
-                    ignores: [
-                        '<%= config.paths.src %>/lib/**/*.js',
-                        '<%= config.paths.test %>/lib/**/*.js'
-                    ]
                 },
                 src: [
                     '<%= config.paths.src %>/**/*.js',
@@ -169,57 +174,8 @@ module.exports = function(grunt) {
                     type: 'cobertura',
                     dir: '<%= config.paths.reports %>/coverage/'
                 }
-            },
-
-            singlerun: {
-                configFile: 'karma.conf.js',
-                browsers: ['Chrome'],
-                reporters: ['coverage'],
-                preprocessors: {
-                    'src/js/**/*.js': 'coverage',
-                },
-                coverageReporter: {
-                    type: 'text',
-                    dir: '<%= config.paths.reports %>/coverage/'
-                }
             }
-
-        }, // karma config parameters
-
-        // uglify config parameters
-        uglify: {
-            deploy: {
-                options: {
-
-                },
-                files: {
-                    '<%= config.paths.deploy %>/js/angular-tv.min.js': [
-                        '<%= config.paths.src %>/js/**/*.js'
-                    ]
-                }
-            }
-        }, // uglify config parameters
-
-        // less config parameters
-        less: {
-            dev: {
-                options: {
-                    paths: [
-                        'src/less'
-                    ]
-                },
-                files: config.less
-            },
-            ci: {
-                options: {
-                    paths: [
-                        'src/less'
-                    ],
-                    cleancss: true
-                },
-                files: config.less
-            }
-        } // less config parameters
+        } // karma config parameters
     });
 
     // grunt target definitions
@@ -227,35 +183,21 @@ module.exports = function(grunt) {
     // prepare and run development environment
     grunt.registerTask('devenv', function() {
         grunt.task.run([
+            'vwsemu',
             'copy:dev',
-            'connect:livereload',
+            'connect:dev',
             'karma:dev', // start the server
-            'open:livereload',
-            'watch:livereload'
+            'open:dev',
+            'watch:dev'
         ]);
     });
 
     // run CI test suite
     grunt.registerTask('ci', function() {
         grunt.task.run([
-            'less:ci',
             'jshint:ci',
             'karma:ci'
         ]);
     });
 
-    // one time test run
-    grunt.registerTask('test', function() {
-        grunt.task.run([
-            'jshint:singlerun',
-            'karma:singlerun'
-        ]);
-    });
-
-    // build deployment
-    grunt.registerTask('build', function() {
-        grunt.task.run([
-            'uglify:deploy'
-        ]);
-    });
 };

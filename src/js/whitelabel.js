@@ -21,6 +21,10 @@
         //}
     //]);
 
+    main.config(['upm:hostProvider', function(upmHostProvider) {
+        upmHostProvider.setPort(8000);
+    }]);
+
     main.controller('mainCtrl', [
         'uhe:services',
         'env:value',
